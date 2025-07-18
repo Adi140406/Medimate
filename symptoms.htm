@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Symptom Tracker | MediMate</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #e8f0fe;
+      padding: 30px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #1a237e;
+    }
+    form {
+      max-width: 500px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #1a237e;
+      color: white;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3949ab;
+    }
+
+    table {
+      width: 90%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 0 12px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #1a237e;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🩺 Symptom Tracker</h1>
+
+  <form id="symptomForm">
+    <label for="symptom">Symptom:</label>
+    <input type="text" id="symptom" name="symptom" required />
+
+    <label for="intensity">Intensity:</label>
+    <select id="intensity" name="intensity">
+      <option value="Mild">Mild</option>
+      <option value="Moderate">Moderate</option>
+      <option value="Severe">Severe</option>
+    </select>
+
+    <label for="symptomDate">Date:</label>
+    <input type="date" id="symptomDate" name="symptomDate" required />
+
+    <label for="notes">Additional Notes (optional):</label>
+    <input type="text" id="notes" name="notes" />
+
+    <button type="submit">Add Symptom</button>
+  </form>
+
+  <h2>📋 Logged Symptoms</h2>
+  <table id="symptomTable">
+    <thead>
+      <tr>
+        <th>Symptom</th>
+        <th>Intensity</th>
+        <th>Date</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Will be filled dynamically -->
+    </tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById('symptomForm');
+    const symptomTableBody = document.querySelector('#symptomTable tbody');
+
+    window.onload = loadSymptoms;
+
+    function loadSymptoms() {
+      symptomTableBody.innerHTML = '';
+      const symptoms = JSON.parse(localStorage.getItem('symptoms')) || [];
+      symptoms.forEach(sym => addSymptomToTable(sym));
+    }
+
+    function addSymptomToTable(symptom) {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${symptom.name}</td>
+        <td>${symptom.intensity}</td>
+        <td>${symptom.date}</td>
+        <td>${symptom.notes}</td>
+      `;
+      symptomTableBody.appendChild(row);
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const symptom = {
+        name: document.getElementById('symptom').value,
+        intensity: document.getElementById('intensity').value,
+        date: document.getElementById('symptomDate').value,
+        notes: document.getElementById('notes').value,
+      };
+
+      const symptoms = JSON.parse(localStorage.getItem('symptoms')) || [];
+      symptoms.push(symptom);
+      localStorage.setItem('symptoms', JSON.stringify(symptoms));
+
+      addSymptomToTable(symptom);
+      alert('✅ Symptom added successfully!');
+      form.reset();
+    });
+  </script>
+
+</body>
+</html>
