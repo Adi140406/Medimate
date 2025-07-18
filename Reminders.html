@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Medicine Reminders | MediMate</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3f4f6;
+      padding: 30px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #1d3557;
+    }
+    form {
+      max-width: 500px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #1d3557;
+      color: white;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #457b9d;
+    }
+
+    table {
+      width: 90%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 0 12px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #1d3557;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>💊 Set Your Medicine Reminder</h1>
+
+  <form id="reminderForm">
+    <label for="medicineName">Medicine Name:</label>
+    <input type="text" id="medicineName" name="medicineName" required />
+
+    <label for="dosage">Dosage (e.g. 1 tablet, 5ml):</label>
+    <input type="text" id="dosage" name="dosage" required />
+
+    <label for="time">Reminder Time:</label>
+    <input type="time" id="time" name="time" required />
+
+    <label for="frequency">Frequency:</label>
+    <select id="frequency" name="frequency">
+      <option value="once">Once a day</option>
+      <option value="twice">Twice a day</option>
+      <option value="thrice">Thrice a day</option>
+    </select>
+
+    <label for="notes">Notes (optional):</label>
+    <input type="text" id="notes" name="notes" />
+
+    <button type="submit">Set Reminder</button>
+  </form>
+
+  <h2>📅 Your Reminders</h2>
+  <table id="reminderTable">
+    <thead>
+      <tr>
+        <th>Medicine</th>
+        <th>Dosage</th>
+        <th>Time</th>
+        <th>Frequency</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Filled dynamically -->
+    </tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById('reminderForm');
+    const tableBody = document.querySelector('#reminderTable tbody');
+
+    // Load reminders from localStorage on page load
+    window.onload = loadReminders;
+
+    function loadReminders() {
+      tableBody.innerHTML = '';
+      const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+      reminders.forEach((reminder) => addReminderToTable(reminder));
+    }
+
+    function addReminderToTable(reminder) {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${reminder.medicine}</td>
+        <td>${reminder.dosage}</td>
+        <td>${reminder.time}</td>
+        <td>${reminder.frequency}</td>
+        <td>${reminder.notes}</td>
+      `;
+      tableBody.appendChild(row);
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const reminder = {
+        medicine: document.getElementById('medicineName').value,
+        dosage: document.getElementById('dosage').value,
+        time: document.getElementById('time').value,
+        frequency: document.getElementById('frequency').value,
+        notes: document.getElementById('notes').value,
+      };
+
+      // Save to localStorage
+      const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+      reminders.push(reminder);
+      localStorage.setItem('reminders', JSON.stringify(reminders));
+
+      addReminderToTable(reminder);
+      alert('✅ Reminder set successfully!');
+      form.reset();
+    });
+  </script>
+
+</body>
+</html>
